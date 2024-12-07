@@ -1,0 +1,16 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/main.py",  // Apunta a la ruta absoluta de tu archivo principal
+            "console": "integratedTerminal",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}"  // Asegura que el directorio raíz esté en PYTHONPATH
+            },
+            "args": ["--music"]  // Argumentos opcionales, como --anime, si es necesario
+        }
+    ]
+}
