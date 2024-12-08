@@ -4,10 +4,16 @@ Entrypoint
 
 import argparse
 
-from modules.movie_scrapper import MovieScraper
+from modules.movie_scraper import MovieScraper
 from modules.anime_scraper import AnimeScraper
 from modules.music_scraper import MusicScraper
-from core.config import HEADERS, ELEMENTS_TO_SCRAPE, MOVIES_ELEMENTS
+from modules.book_scraper import BookScraper
+from core.config import (
+    HEADERS,
+    ELEMENTS_TO_SCRAPE,
+    MOVIES_ELEMENTS,
+    BOOKS_ELEMENTS,
+)
 
 
 def read_links_from_file(file_path: str) -> list[str]:
@@ -59,6 +65,11 @@ if __name__ == "__main__":
         action="store_true",
         help="Music Version",
     )
+    parser.add_argument(
+        "--book",
+        action="store_true",
+        help="Music Version",
+    )
     args: argparse.Namespace = parser.parse_args()
 
     if args.movie:
@@ -80,6 +91,14 @@ if __name__ == "__main__":
     elif args.music:
         output_file = "music_list.txt"
         scraper = MusicScraper(headers=HEADERS)
+        results: str = scraper.scrape_links(links)
+        save_results_to_file(output_file, results)
+    elif args.book:
+        output_file = "book_list.txt"
+        scraper = BookScraper(
+            headers=HEADERS,
+            elements=BOOKS_ELEMENTS,
+        )
         results: str = scraper.scrape_links(links)
         save_results_to_file(output_file, results)
     else:
