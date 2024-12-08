@@ -32,3 +32,8 @@ MOVIES_ELEMENTS: dict[str, str] = {
     "title": "h1 > span.hero__primary-text",
     "year": "div.sc-70a366cc-0.bxYZmb > ul.ipc-inline-list > li.ipc-inline-list__item",
 }
+
+BOOKS_ELEMENTS: dict[str, str] = {
+    "title": "h1.Text.Text__title1",
+    "year": "div.FeaturedDetails p[data-testid='publicationInfo']",
+}
