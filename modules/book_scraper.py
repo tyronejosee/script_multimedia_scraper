@@ -3,11 +3,15 @@ Book Scraper Module
 """
 
 import requests
+import logging
 from requests import Response
 from bs4 import BeautifulSoup, NavigableString, Tag
 
 from .base_scraper import BaseScraper
+from core.logging import setup_logging
 from core.utils import extract_year
+
+setup_logging()
 
 
 class BookScraper(BaseScraper):
@@ -43,6 +47,7 @@ class BookScraper(BaseScraper):
             url: str = data.get("url", "Unknown URL")
             image: str = data.get("image", "No Image Available")
 
+            logging.info(f"Processing: {title} ({year})")
             return (
                 f"\n# {title} ({year})\n\n"
                 f"Registry: <{url}>\n"

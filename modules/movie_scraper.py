@@ -46,5 +46,5 @@ class MovieScraper(BaseScraper):
                 f"Link: <?>\n\n"
             )
         except Exception as e:
-            print(f"Error {link}: {e}")
+            logging.error(f"Error {link}: {e}")
             return ""

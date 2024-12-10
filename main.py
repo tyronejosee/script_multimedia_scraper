@@ -31,7 +31,7 @@ SCRAPER_CONFIG = {
     },
     "anime": {
         "scraper_class": AnimeScraper,
-        "headers": config.HEADERS_EN,
+        "headers": HEADERS_EN,
         "elements": config.ELEMENTS_TO_SCRAPE,
         "output_file": "anime_list.txt",
     },
