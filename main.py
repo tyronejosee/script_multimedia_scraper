@@ -3,19 +3,51 @@ Entrypoint
 """
 
 import argparse
+import logging
+from typing import Any
 
+from core import config
+from core.logging import setup_logging
 from modules.movie_scraper import MovieScraper
 from modules.anime_scraper import AnimeScraper
 from modules.music_scraper import MusicScraper
 from modules.book_scraper import BookScraper
-from core.config import (
-    HEADERS_EN,
-    HEADERS_ES,
-    ELEMENTS_TO_SCRAPE,
-    MOVIES_ELEMENTS,
-    SERIES_ELEMENTS,
-    BOOKS_ELEMENTS,
-)
+
+setup_logging()
+
+
+SCRAPER_CONFIG = {
+    "movie": {
+        "scraper_class": MovieScraper,
+        "headers": config.HEADERS_ES,
+        "elements": config.MOVIES_ELEMENTS,
+        "output_file": "movie_list.txt",
+    },
+    "serie": {
+        "scraper_class": MovieScraper,
+        "headers": config.HEADERS_EN,
+        "elements": config.SERIES_ELEMENTS,
+        "output_file": "movie_list.txt",
+    },
+    "anime": {
+        "scraper_class": AnimeScraper,
+        "headers": config.HEADERS_EN,
+        "elements": config.ELEMENTS_TO_SCRAPE,
+        "output_file": "anime_list.txt",
+    },
+    "music": {
+        "scraper_class": MusicScraper,
+        "headers": config.HEADERS_EN,
+        "elements": None,
+        "output_file": "music_list.txt",
+    },
+    "book": {
+        "scraper_class": BookScraper,
+        "headers": config.HEADERS_EN,
+        "elements": config.BOOKS_ELEMENTS,
+        "output_file": "book_list.txt",
+    },
+}
 
 
 def read_links_from_file(file_path: str) -> list[str]:
@@ -26,10 +58,10 @@ def read_links_from_file(file_path: str) -> list[str]:
         with open(file_path, "r", encoding="utf-8") as file:
             return file.read().splitlines()
     except FileNotFoundError:
-        print(f"Error: file {file_path} was not found.")
+        logging.error(f"Error: file {file_path} was not found.")
         return []
     except Exception as e:
-        print(f"Error reading file: {e}")
+        logging.error(f"Error reading file: {e}")
         return []
 
 
@@ -39,6 +71,26 @@ def save_results_to_file(file_path: str, data: str):
     """
     with open(file_path, "w", encoding="utf-8") as file:
         file.write(data)
+
+
+def execute_scraper(scraper_type: str, links: list[str]):
+    """
+    Executes the scraper based on the selected type.
+    """
+    config = SCRAPER_CONFIG.get(scraper_type)
+    if not config:
+        logging.error(f"Error: Invalid scraper type '{scraper_type}'.")
+        return
+
+    scraper_class: Any = config["scraper_class"]
+    headers: dict[str, str] = config["headers"]
+    elements: dict[str, str] = config["elements"]
+    output_file: str = config["output_file"]
+
+    scraper = scraper_class(headers=headers, elements=elements)
+    results: str = scraper.scrape_links(links)
+    save_results_to_file(output_file, results)
+    logging.warning(f"Results saved to {output_file}")
 
 
 if __name__ == "__main__":
@@ -51,70 +103,18 @@ if __name__ == "__main__":
     links_file = "static/links.txt"
     links: list[str] = read_links_from_file(links_file)
 
+    # Args configs
     parser = argparse.ArgumentParser(description="Webscrapping Script.")
     parser.add_argument(
-        "--movie",
-        action="store_true",
-        help="Movie Version",
-    )
-    parser.add_argument(
-        "--serie",
-        action="store_true",
-        help="Serie Version",
-    )
-    parser.add_argument(
-        "--anime",
-        action="store_true",
-        help="Anime Version",
-    )
-    parser.add_argument(
-        "--music",
-        action="store_true",
-        help="Music Version",
-    )
-    parser.add_argument(
-        "--book",
-        action="store_true",
-        help="Music Version",
+        "--type",
+        choices=["movie", "serie", "anime", "music", "book"],
+        required=True,
+        help="Select the type of scraper to run.",
     )
     args: argparse.Namespace = parser.parse_args()
 
-    if args.movie:
-        output_file = "movie_list.txt"
-        scraper = MovieScraper(
-            headers=HEADERS_ES,
-            elements=MOVIES_ELEMENTS,
-        )
-        results: str = scraper.scrape_links(links)
-        save_results_to_file(output_file, results)
-    if args.serie:
-        output_file = "serie_list.txt"
-        scraper = MovieScraper(
-            headers=HEADERS_EN,
-            elements=SERIES_ELEMENTS,
-        )
-        results: str = scraper.scrape_links(links)
-        save_results_to_file(output_file, results)
-    elif args.anime:
-        output_file = "anime_list.txt"
-        scraper = AnimeScraper(
-            headers=HEADERS_EN,
-            elements=ELEMENTS_TO_SCRAPE,
-        )
-        results: str = scraper.scrape_links(links)
-        save_results_to_file(output_file, results)
-    elif args.music:
-        output_file = "music_list.txt"
-        scraper = MusicScraper(headers=HEADERS_EN)
-        results: str = scraper.scrape_links(links)
-        save_results_to_file(output_file, results)
-    elif args.book:
-        output_file = "book_list.txt"
-        scraper = BookScraper(
-            headers=HEADERS_EN,
-            elements=BOOKS_ELEMENTS,
-        )
-        results: str = scraper.scrape_links(links)
-        save_results_to_file(output_file, results)
+    if not links:
+        logging.error(f"No links found in {links_file}")
     else:
-        print("Error")
+        logging.warning("Starting...")
+        execute_scraper(args.type, links)

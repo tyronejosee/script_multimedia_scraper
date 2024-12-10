@@ -9,13 +9,10 @@ from bs4 import BeautifulSoup, Tag
 
 from .base_scraper import BaseScraper
 from core.config import HEADERS_ES
+from core.logging import setup_logging
 from core.utils import extract_year, format_title
 
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[logging.StreamHandler()]
-)
+setup_logging()
 
 
 class MovieScraper(BaseScraper):

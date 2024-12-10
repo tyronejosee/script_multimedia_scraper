@@ -25,7 +25,7 @@ EXCEPTIONS: set[str] = {
     "en",
 }
 
-ROMAN_NUMERALS = {
+ROMAN_NUMERALS: set[str] = {
     "I",
     "II",
     "III",
