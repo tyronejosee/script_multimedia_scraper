@@ -9,9 +9,11 @@ from modules.anime_scraper import AnimeScraper
 from modules.music_scraper import MusicScraper
 from modules.book_scraper import BookScraper
 from core.config import (
-    HEADERS,
+    HEADERS_EN,
+    HEADERS_ES,
     ELEMENTS_TO_SCRAPE,
     MOVIES_ELEMENTS,
+    SERIES_ELEMENTS,
     BOOKS_ELEMENTS,
 )
 
@@ -56,6 +58,11 @@ if __name__ == "__main__":
         help="Movie Version",
     )
     parser.add_argument(
+        "--serie",
+        action="store_true",
+        help="Serie Version",
+    )
+    parser.add_argument(
         "--anime",
         action="store_true",
         help="Anime Version",
@@ -75,28 +82,36 @@ if __name__ == "__main__":
     if args.movie:
         output_file = "movie_list.txt"
         scraper = MovieScraper(
-            headers=HEADERS,
+            headers=HEADERS_ES,
             elements=MOVIES_ELEMENTS,
+        )
+        results: str = scraper.scrape_links(links)
+        save_results_to_file(output_file, results)
+    if args.serie:
+        output_file = "serie_list.txt"
+        scraper = MovieScraper(
+            headers=HEADERS_EN,
+            elements=SERIES_ELEMENTS,
         )
         results: str = scraper.scrape_links(links)
         save_results_to_file(output_file, results)
     elif args.anime:
         output_file = "anime_list.txt"
         scraper = AnimeScraper(
-            headers=HEADERS,
+            headers=HEADERS_EN,
             elements=ELEMENTS_TO_SCRAPE,
         )
         results: str = scraper.scrape_links(links)
         save_results_to_file(output_file, results)
     elif args.music:
         output_file = "music_list.txt"
-        scraper = MusicScraper(headers=HEADERS)
+        scraper = MusicScraper(headers=HEADERS_EN)
         results: str = scraper.scrape_links(links)
         save_results_to_file(output_file, results)
     elif args.book:
         output_file = "book_list.txt"
         scraper = BookScraper(
-            headers=HEADERS,
+            headers=HEADERS_EN,
             elements=BOOKS_ELEMENTS,
         )
         results: str = scraper.scrape_links(links)

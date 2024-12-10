@@ -3,7 +3,7 @@ Core Utils
 """
 
 import re
-from core.config import EXCEPTIONS
+from core.config import EXCEPTIONS, ROMAN_NUMERALS
 
 
 def format_title(title: str) -> str:
@@ -12,7 +12,9 @@ def format_title(title: str) -> str:
     """
     words: list[str] = title.split()
     formatted_title: list[str] = [
-        word.capitalize() if word.lower() not in EXCEPTIONS else word.lower()
+        word if word.upper() in ROMAN_NUMERALS else (
+            word.capitalize() if word.lower() not in EXCEPTIONS else word.lower()
+        )
         for word in words
     ]
     formatted_title[0] = formatted_title[0].capitalize()

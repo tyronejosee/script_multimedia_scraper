@@ -18,7 +18,7 @@ class MusicScraper(BaseScraper):
 
     def scrape_link(self, link: str) -> str:
         try:
-            response = requests.get(
+            response: Response = requests.get(
                 link,
                 headers=self.headers,
             )
