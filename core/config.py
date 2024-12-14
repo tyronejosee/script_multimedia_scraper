@@ -17,12 +17,18 @@ EXCEPTIONS: set[str] = {
     "las",
     "el",
     "la",
+    "al",
     "y",
     "de",
     "del",
     "para",
     "por",
     "en",
+    "se",
+    "es",
+    "una",
+    "que",
+    "me",
 }
 
 ROMAN_NUMERALS: set[str] = {
@@ -55,9 +61,16 @@ ELEMENTS_TO_SCRAPE: dict[str, str] = {
     "og_image": 'meta[property="og:image"]',
 }
 
+MANGA_ELEMENTS: dict[str, str] = {
+    "title_jpn": "span.h1-title > span",
+    "title_eng": "span.h1-title > span > span.title-english",
+    "year": "div.spaceit_pad:has(span.dark_text:-soup-contains('Published'))",
+    "og_image": 'meta[property="og:image"]',
+}
+
 MOVIES_ELEMENTS: dict[str, str] = {
     "title": "h1 > span.hero__primary-text",
-    "year": "div.sc-70a366cc-0.bxYZmb > ul.ipc-inline-list > li.ipc-inline-list__item",
+    "year": "title",
 }
 
 SERIES_ELEMENTS: dict[str, str] = {

@@ -6,10 +6,11 @@ import argparse
 import logging
 from typing import Any
 
-from core import config
+from core import config as conf
 from core.logging import setup_logging
 from modules.movie_scraper import MovieScraper
 from modules.anime_scraper import AnimeScraper
+from modules.manga_scraper import MangaScraper
 from modules.music_scraper import MusicScraper
 from modules.book_scraper import BookScraper
 
@@ -19,32 +20,38 @@ setup_logging()
 SCRAPER_CONFIG = {
     "movie": {
         "scraper_class": MovieScraper,
-        "headers": config.HEADERS_ES,
-        "elements": config.MOVIES_ELEMENTS,
+        "headers": conf.HEADERS_ES,
+        "elements": conf.MOVIES_ELEMENTS,
         "output_file": "movie_list.txt",
     },
     "serie": {
         "scraper_class": MovieScraper,
-        "headers": config.HEADERS_EN,
-        "elements": config.SERIES_ELEMENTS,
-        "output_file": "movie_list.txt",
+        "headers": conf.HEADERS_EN,
+        "elements": conf.SERIES_ELEMENTS,
+        "output_file": "serie_list.txt",
     },
     "anime": {
         "scraper_class": AnimeScraper,
-        "headers": HEADERS_EN,
-        "elements": config.ELEMENTS_TO_SCRAPE,
+        "headers": conf.HEADERS_EN,
+        "elements": conf.ELEMENTS_TO_SCRAPE,
         "output_file": "anime_list.txt",
+    },
+    "manga": {
+        "scraper_class": MangaScraper,
+        "headers": conf.HEADERS_EN,
+        "elements": conf.MANGA_ELEMENTS,
+        "output_file": "manga_list.txt",
     },
     "music": {
         "scraper_class": MusicScraper,
-        "headers": config.HEADERS_EN,
+        "headers": conf.HEADERS_EN,
         "elements": None,
         "output_file": "music_list.txt",
     },
     "book": {
         "scraper_class": BookScraper,
-        "headers": config.HEADERS_EN,
-        "elements": config.BOOKS_ELEMENTS,
+        "headers": conf.HEADERS_EN,
+        "elements": conf.BOOKS_ELEMENTS,
         "output_file": "book_list.txt",
     },
 }
@@ -107,7 +114,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Webscrapping Script.")
     parser.add_argument(
         "--type",
-        choices=["movie", "serie", "anime", "music", "book"],
+        choices=["movie", "serie", "anime", "manga", "music", "book"],
         required=True,
         help="Select the type of scraper to run.",
     )

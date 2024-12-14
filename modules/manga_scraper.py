@@ -1,51 +1,48 @@
 """
-Book Scraper Module
+Manga Scraper Module
 """
 
-import requests
 import logging
+import requests
 from requests import Response
-from bs4 import BeautifulSoup, NavigableString, Tag
+from bs4 import BeautifulSoup, Tag
 
 from .base_scraper import BaseScraper
 from core.logging import setup_logging
-from core.utils import extract_year, format_title
+from core.utils import extract_year
 
 setup_logging()
 
 
-class BookScraper(BaseScraper):
+class MangaScraper(BaseScraper):
     """
-    Scraper specialized in extracting book data from a URL.
+    Scraper specialized in extracting manga data from a URL.
     """
 
     def scrape_link(self, link: str) -> str:
         try:
-            # Perform an HTTP GET request to the provided URL
             response: Response = requests.get(link, headers=self.headers)
             response.raise_for_status()
-
-            # Parse the HTML content of the page
             soup = BeautifulSoup(response.text, "html.parser")
             data: dict[str, str] = {"url": link}
 
-            # Iterate over selectors and extract their text
             for name, selector in self.elements.items():
                 element: Tag | None = soup.select_one(selector)
                 data[name] = element.text.strip() if element else None
 
             # Extract the image
-            image_tag: Tag | NavigableString | None = soup.find(
-                "meta", property="og:image"
-            )
+            image_tag = soup.find("meta", property="og:image")
             if image_tag and image_tag.get("content"):
                 data["image"] = image_tag["content"]
 
             # Get each element from the dictionary
-            title: str = format_title(data.get("title", "Not Title"))
-            year: str = extract_year(data.get("year", "Not Year"))
-            url: str = data.get("url", "Not URL")
-            image: str = data.get("image", "Not Image")
+            title_eng: str = data.get("title_eng", "")
+            title_jpn: str = data.get("title_jpn", "")
+            year: str = extract_year(data.get("year", ""))
+            url: str = data.get("url")
+            image: str = data.get("image", "")
+
+            title: str = title_eng if title_eng else title_jpn
 
             logging.info(f"Processing: {title} ({year})")
             return (
@@ -55,5 +52,5 @@ class BookScraper(BaseScraper):
                 f"Link: <?>\n\n"
             )
         except Exception as e:
-            print(f"Error {link}: {e}")
+            logging.info(f"Error {link}: {e}")
             return ""
