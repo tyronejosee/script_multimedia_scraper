@@ -28,24 +28,28 @@ class AnimeScraper(BaseScraper):
 
             for name, selector in self.elements.items():
                 element: Tag | None = soup.select_one(selector)
-                data[name] = element.text.strip() if element else None
+                data[name] = element.text.strip() if element else ""
 
             # Extract the image
             image_tag: Tag | NavigableString | None = soup.find(
                 "meta", property="og:image"
             )
-            if image_tag and image_tag.get("content"):
-                data["image"] = image_tag["content"]
+            if isinstance(image_tag, Tag) and image_tag.get("content"):
+                data["image"] = str(image_tag.get("content", ""))
+            else:
+                data["image"] = ""
 
             # Get each element from the dictionary
-            title_eng: str = data.get("title_eng", "")
-            title_jpn: str = data.get("title_jpn", "")
-            year: str = extract_year(data.get("year", ""))
-            url: str = data.get("url")
+            title_eng: str | None = data.get("title_eng") or None
+            title_jpn: str = data.get("title_jpn") or "Not Title"
+            year: str = extract_year(data.get("year") or "0000")
+            url: str = data.get("url") or ""
             image: str = data.get("image", "")
 
             title: str = (
-                format_title(title_eng) if title_eng else format_title(title_jpn)
+                format_title(title_eng)
+                if title_eng
+                else format_title(title_jpn)
             )
 
             logging.info(f"Processing: {title} ({year})")

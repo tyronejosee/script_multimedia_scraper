@@ -29,12 +29,13 @@ class MovieScraper(BaseScraper):
 
             for name, selector in self.elements.items():
                 element: Tag | None = soup.select_one(selector)
-                data[name] = element.text.strip() if element else None
+                data[name] = element.text.strip() if element else ""
 
             # Get each element from the dictionary
-            url: str = data.get("url")
-            title: str = data.get("title", "Not Title")
-            year: str = extract_year(data.get("year", "0000"))
+            url: str = data.get("url") or ""
+            url = url.replace("/es", "")
+            title: str = data.get("title") or "Not Title"
+            year: str = extract_year(data.get("year") or "0000")
 
             if self.headers == HEADERS_ES:
                 title = format_title(title)

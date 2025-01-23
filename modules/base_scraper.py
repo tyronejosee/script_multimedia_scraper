@@ -2,6 +2,8 @@
 Base Scraper
 """
 
+from typing import Optional
+
 
 class BaseScraper:
     """
@@ -12,8 +14,8 @@ class BaseScraper:
     def __init__(
         self,
         headers: dict[str, str],
-        elements: dict[str, str] = None,
-    ):
+        elements: Optional[dict[str, str]] = None,
+    ) -> None:
         self.headers: dict[str, str] = headers
         self.elements: dict[str, str] = elements or {}
 
@@ -21,7 +23,7 @@ class BaseScraper:
         """
         Scrapes a specific link.
         """
-        pass
+        return f"Scraping {link}"
 
     def scrape_links(self, links: list[str]) -> str:
         """
