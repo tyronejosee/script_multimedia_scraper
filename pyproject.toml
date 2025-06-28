@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "multimedia scraper"
+name = "core"
 version = "0.1.0"
 description = "Pending description"
 authors = ["tyronejose <alt.tyronejose@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.10"
 beautifulsoup4 = "^4.12.3"
 requests = "^2.32.3"
 colorlog = "^6.9.0"

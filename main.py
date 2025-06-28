@@ -44,7 +44,7 @@ SCRAPER_CONFIG = {
     },
     "music": {
         "scraper_class": MusicScraper,
-        "headers": conf.HEADERS_EN,
+        "headers": conf.HEADERS_ES,
         "elements": None,
         "output_file": "music_list.txt",
     },
@@ -72,7 +72,7 @@ def read_links_from_file(file_path: str) -> list[str]:
         return []
 
 
-def save_results_to_file(file_path: str, data: str):
+def save_results_to_file(file_path: str, data: str) -> None:
     """
     Saves the scraped results to a text file.
     """
@@ -80,7 +80,7 @@ def save_results_to_file(file_path: str, data: str):
         file.write(data)
 
 
-def execute_scraper(scraper_type: str, links: list[str]):
+def execute_scraper(scraper_type: str, links: list[str]) -> None:
     """
     Executes the scraper based on the selected type.
     """

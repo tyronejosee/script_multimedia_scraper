@@ -2,10 +2,11 @@
 Book Scraper Module
 """
 
+from bs4.element import PageElement
 import requests
 import logging
 from requests import Response
-from bs4 import BeautifulSoup, NavigableString, Tag
+from bs4 import BeautifulSoup, Tag
 
 from .base_scraper import BaseScraper
 from core.logging import setup_logging
@@ -31,8 +32,9 @@ class BookScraper(BaseScraper):
                 data[name] = element.text.strip() if element else ""
 
             # Extract the image
-            image_tag: Tag | NavigableString | None = soup.find(
-                "meta", property="og:image"
+            image_tag: PageElement | Tag | None = soup.find(
+                "meta",
+                property="og:image",
             )
             if isinstance(image_tag, Tag) and image_tag.get("content"):
                 data["image"] = str(image_tag.get("content", ""))

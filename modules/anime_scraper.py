@@ -3,9 +3,10 @@ Anime Scraper Module
 """
 
 import logging
+from bs4.element import NavigableString, PageElement
 import requests
-from requests import Response
-from bs4 import BeautifulSoup, NavigableString, Tag
+from typing import Optional
+from bs4 import BeautifulSoup, Tag
 
 from .base_scraper import BaseScraper
 from core.logging import setup_logging
@@ -21,17 +22,20 @@ class AnimeScraper(BaseScraper):
 
     def scrape_link(self, link: str) -> str:
         try:
-            response: Response = requests.get(link, headers=self.headers)
+            response: requests.Response = requests.get(
+                link,
+                headers=self.headers,
+            )
             response.raise_for_status()
             soup = BeautifulSoup(response.text, "html.parser")
-            data: dict[str, str] = {"url": link}
+            data: dict = {"url": link}
 
             for name, selector in self.elements.items():
-                element: Tag | None = soup.select_one(selector)
+                element: Optional[Tag] = soup.select_one(selector)
                 data[name] = element.text.strip() if element else ""
 
             # Extract the image
-            image_tag: Tag | NavigableString | None = soup.find(
+            image_tag: PageElement | Tag | NavigableString | None = soup.find(
                 "meta", property="og:image"
             )
             if isinstance(image_tag, Tag) and image_tag.get("content"):
@@ -40,14 +44,16 @@ class AnimeScraper(BaseScraper):
                 data["image"] = ""
 
             # Get each element from the dictionary
-            title_eng: str | None = data.get("title_eng") or None
-            title_jpn: str = data.get("title_jpn") or "Not Title"
+            title_eng: str = data.get("title_eng") or ""
+            title_jpn: str = data.get("title_jpn") or ""
             year: str = extract_year(data.get("year") or "0000")
             url: str = data.get("url") or ""
             image: str = data.get("image", "")
 
             title: str = (
-                format_title(title_eng)
+                format_title(
+                    title_eng,
+                )
                 if title_eng
                 else format_title(title_jpn)
             )
